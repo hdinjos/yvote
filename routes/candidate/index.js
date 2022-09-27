@@ -16,8 +16,8 @@ router.get("/candidates", async (req, res) => {
 });
 
 router.post("/candidates", async (req, res) => {
-  const { user_id, motto } = req.body;
-  if (user_id && motto) {
+  const { user_id, motto, agenda_id } = req.body;
+  if (user_id && motto && agenda_id) {
     const existCandidate = await query(
       "SELECT id FROM candidates WHERE user_id=?",
       [user_id]
@@ -28,16 +28,17 @@ router.post("/candidates", async (req, res) => {
       });
     } else {
       try {
-        await query("INSERT INTO candidates(user_id, motto) VALUES(?,?)", [
-          user_id,
-          motto,
-        ]);
+        await query(
+          "INSERT INTO candidates(user_id, motto, agenda_id) VALUES(?,?,?)",
+          [user_id, motto, agenda_id]
+        );
         return res.status(201).json({ msg: "create candidate success" });
       } catch (err) {
+        console.log(err);
         if (err?.code === "ER_NO_REFERENCED_ROW_2") {
           return res
             .status(400)
-            .json({ msg: "User is not registered, use another" });
+            .json({ msg: "User/agenda is not registered, use another" });
         } else {
           return res.status(403).json({ msg: "Something wrong" });
         }
