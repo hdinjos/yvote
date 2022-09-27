@@ -9,11 +9,22 @@ import {
 const router = express.Router();
 
 router.get("/votes", isOriganizer, async (req, res) => {
-  const vote = await query(
-    "SELECT A.id, B.user_id FROM votes as A INNER JOIN candidates as B ON A.candidate_id = B.id"
+  const candidates = await query(
+    "SELECT A.id, name, motto, user_id, agenda_id FROM candidates as A INNER JOIN users as B ON A.user_id=B.id"
   );
-  console.log(vote);
-  return res.json({ msg: "success", data: vote });
+
+  let voteResults = [];
+  for (let i = 0; i < candidates.length; i++) {
+    let id_candidate = candidates[i].id;
+    const vote = await query(
+      "SELECT COUNT(id) as votes_count FROM votes WHERE candidate_id=?",
+      [id_candidate]
+    );
+    const mergerData = { ...candidates[i], ...vote[0] };
+    voteResults.push(mergerData);
+  }
+
+  return res.json({ msg: "success", data: voteResults });
 });
 
 router.post("/votes", isChoice, isVote, async (req, res) => {
