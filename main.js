@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
 import agenda from "./routes/agenda/index.js";
+import vote from "./routes/vote/index.js";
 import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", async (req, res) => {
 
 app.use(auth);
 app.use(sessionCheck);
+app.use(vote);
 app.use(candidate);
 app.use(agenda);
 app.listen(port, () => {

@@ -1,4 +1,5 @@
 import { verifyToken } from "../helper/jwt.js";
+import query from "../databases/query.js";
 
 const sessionCheck = (req, res, next) => {
   const tokenBearer = req.get("Authorization");
@@ -30,7 +31,7 @@ const isOriganizer = (req, res, next) => {
   }
 };
 
-const isChoice = (req, res, next) => {
+const isChoice = async (req, res, next) => {
   if (req.user) {
     const { role_id } = req.user;
     if (role_id === 2) {
@@ -43,4 +44,14 @@ const isChoice = (req, res, next) => {
   }
 };
 
-export { sessionCheck, isOriganizer, isChoice };
+const isVote = async (req, res, next) => {
+  const { id } = req.user;
+  const user = await query("SELECT is_vote FROM users WHERE id=?", [id]);
+  if (user.length > 0 && user[0].is_vote) {
+    return res.status(401).json({ msg: "Not allowed, you have voted" });
+  } else {
+    next();
+  }
+};
+
+export { sessionCheck, isOriganizer, isChoice, isVote };
