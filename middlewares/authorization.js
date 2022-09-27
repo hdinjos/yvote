@@ -17,7 +17,7 @@ const sessionCheck = (req, res, next) => {
   }
 };
 
-const isPanitia = (req, res, next) => {
+const isOriganizer = (req, res, next) => {
   if (req.user) {
     const { role_id } = req.user;
     if (role_id === 1) {
@@ -43,4 +43,4 @@ const isChoice = (req, res, next) => {
   }
 };
 
-export { sessionCheck, isPanitia, isChoice };
+export { sessionCheck, isOriganizer, isChoice };
