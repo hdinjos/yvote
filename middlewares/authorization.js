@@ -44,6 +44,20 @@ const isChoice = async (req, res, next) => {
   }
 };
 
+const allRole = (req, res, next) => {
+  if (req.user) {
+    const { role_id } = req.user;
+    if (role_id === 1 || role_id === 2) {
+      next();
+    } else {
+      return res.status(401).json({ msg: "Not allowed" });
+    }
+  } else {
+    return res.status(401).json({ msg: "Not allowed" });
+  }
+  allRole;
+};
+
 const isVote = async (req, res, next) => {
   const { id } = req.user;
   const user = await query("SELECT is_vote FROM users WHERE id=?", [id]);
@@ -54,4 +68,4 @@ const isVote = async (req, res, next) => {
   }
 };
 
-export { sessionCheck, isOriganizer, isChoice, isVote };
+export { sessionCheck, isOriganizer, isChoice, allRole, isVote };

@@ -1,12 +1,14 @@
 import express from "express";
 import query from "../../databases/query.js";
-import { isOriganizer } from "../../middlewares/authorization.js";
+import {
+  isOriganizer,
+  allRole,
+  isVote,
+} from "../../middlewares/authorization.js";
 
 const router = express.Router();
 
-router.use(isOriganizer);
-
-router.get("/candidates", async (req, res) => {
+router.get("/candidates", isVote, allRole, async (req, res) => {
   const { major_id } = req.user;
   const candidate = await query(
     "SELECT A.id, email, name, address, motto FROM candidates as A INNER JOIN users as B ON A.user_id = B.id WHERE major_id=?",
@@ -14,6 +16,8 @@ router.get("/candidates", async (req, res) => {
   );
   return res.json({ msg: "success", data: candidate });
 });
+
+router.use(isOriganizer);
 
 router.post("/candidates", async (req, res) => {
   const { user_id, motto, agenda_id } = req.body;

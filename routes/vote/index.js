@@ -51,21 +51,4 @@ router.post("/votes", isChoice, isVote, async (req, res) => {
   }
 });
 
-// router.delete("/candidates/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const removeCandidate = await query("DELETE FROM candidates WHERE id=?", [
-//       id,
-//     ]);
-//     if (removeCandidate?.affectedRows) {
-//       return res.json({ msg: "Delete candidate success" });
-//     } else {
-//       return res.status(404).json({ msg: "Candidate not found" });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(404).json({ msg: "Candidate not found" });
-//   }
-// });
-
 export default router;
