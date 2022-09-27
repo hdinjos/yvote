@@ -6,8 +6,8 @@ async function userSeed() {
   const sql =
     "INSERT INTO users (email, password, name, address, age, role_id, major_id) VALUES(?, ?, ?, ?, ?, ?, ?)";
   const data = [
-    ["jkt_it@gg.com", hash, "admin", "Yogyakarta", 0, 1, 1],
-    ["45r_it@gg.com", hash, "user", "Yogyakarta", 0, 2, 1],
+    ["panitia_it@gg.com", hash, "admin", "Yogyakarta", 0, 1, 1],
+    ["user_it@gg.com", hash, "user", "Yogyakarta", 0, 2, 1],
   ];
 
   for (let i = 0; i < data.length; i++) {
