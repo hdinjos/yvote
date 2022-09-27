@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import query from "./databases/query.js";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
 import { sessionCheck } from "./middlewares/authorization.js";

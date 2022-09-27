@@ -1,8 +1,10 @@
 import express from "express";
 import query from "../../databases/query.js";
-import bcrypt from "bcryptjs";
-import { generateToken } from "../../helper/jwt.js";
+import { isPanitia } from "../../middlewares/authorization.js";
+
 const router = express.Router();
+
+router.use(isPanitia);
 
 router.get("/candidates", async (req, res) => {
   const candidate = await query("SELECT * FROM candidates");

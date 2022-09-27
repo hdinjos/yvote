@@ -17,6 +17,30 @@ const sessionCheck = (req, res, next) => {
   }
 };
 
-const roleCheck = () => {};
+const isPanitia = (req, res, next) => {
+  if (req.user) {
+    const { role_id } = req.user;
+    if (role_id === 1) {
+      next();
+    } else {
+      return res.status(401).json({ msg: "Not allowed" });
+    }
+  } else {
+    return res.status(401).json({ msg: "Not allowed" });
+  }
+};
 
-export { sessionCheck, roleCheck };
+const isChoice = (req, res, next) => {
+  if (req.user) {
+    const { role_id } = req.user;
+    if (role_id === 2) {
+      next();
+    } else {
+      return res.status(401).json({ msg: "Not allowed" });
+    }
+  } else {
+    return res.status(401).json({ msg: "Not allowed" });
+  }
+};
+
+export { sessionCheck, isPanitia, isChoice };
