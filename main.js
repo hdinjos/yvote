@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import query from "./databases/query.js";
 import auth from "./routes/auth/index.js";
+import candidate from "./routes/candidate/index.js";
+import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
 const app = express();
@@ -19,6 +21,8 @@ app.get("/", async (req, res) => {
 });
 
 app.use(auth);
+app.use(sessionCheck);
+app.use(candidate);
 app.listen(port, () => {
   console.log("listen port: " + port);
 });
