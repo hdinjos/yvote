@@ -37,7 +37,6 @@ router.post("/votes", isChoice, isVote, async (req, res) => {
       await query("UPDATE users SET is_vote=? WHERE id=?", [1, id]);
       return res.status(201).json({ msg: "Vote is success" });
     } catch (err) {
-      console.log(err);
       if (err?.code === "ER_NO_REFERENCED_ROW_2") {
         return res
           .status(400)

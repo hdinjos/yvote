@@ -25,6 +25,7 @@ app.get("/", async (req, res) => {
 
 app.use(auth);
 app.use(major);
+
 app.use(sessionCheck);
 app.use(user);
 app.use(vote);

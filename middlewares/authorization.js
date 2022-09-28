@@ -55,7 +55,6 @@ const allRole = (req, res, next) => {
   } else {
     return res.status(401).json({ msg: "Not allowed" });
   }
-  allRole;
 };
 
 const isVote = async (req, res, next) => {

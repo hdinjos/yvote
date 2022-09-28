@@ -4,9 +4,7 @@ import { isOriganizer } from "../../middlewares/authorization.js";
 
 const router = express.Router();
 
-router.use(isOriganizer);
-
-router.get("/users", async (req, res) => {
+router.get("/users", isOriganizer, async (req, res) => {
   const { major_id } = req.user;
   const users = await query(
     "SELECT id, name, major_id FROM users WHERE major_id=? AND role_id=?",
