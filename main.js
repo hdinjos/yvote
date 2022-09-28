@@ -6,6 +6,7 @@ import candidate from "./routes/candidate/index.js";
 import agenda from "./routes/agenda/index.js";
 import vote from "./routes/vote/index.js";
 import user from "./routes/user/index.js";
+import major from "./routes/major/index.js";
 import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get("/", async (req, res) => {
 });
 
 app.use(auth);
+app.use(major);
 app.use(sessionCheck);
 app.use(user);
 app.use(vote);
