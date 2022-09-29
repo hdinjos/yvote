@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import bodyParser from "body-parser";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
@@ -11,8 +12,10 @@ import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
 const app = express();
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 const port = 3000;
 

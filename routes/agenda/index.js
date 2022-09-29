@@ -15,6 +15,43 @@ router.get("/agendas", async (req, res) => {
   return res.json({ msg: "success", data: agendas });
 });
 
+router.get("/agendas/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(typeof id);
+  const { major_id } = req.user;
+  const agenda = await query(
+    "SELECT * FROM agendas WHERE id=? AND major_id=?",
+    [id, major_id]
+  );
+  const candidates = await query(
+    `SELECT A.id, name, motto, user_id, agenda_id
+    FROM candidates as A
+    INNER JOIN users as B
+    ON A.user_id=B.id
+    WHERE agenda_id=? AND major_id=?`,
+    [id, major_id]
+  );
+
+  let voteResults = [];
+  for (let i = 0; i < candidates.length; i++) {
+    let id_candidate = candidates[i].id;
+    const vote = await query(
+      "SELECT COUNT(id) as votes_count FROM votes WHERE candidate_id=?",
+      [id_candidate]
+    );
+    const mergerData = { ...candidates[i], ...vote[0] };
+    voteResults.push(mergerData);
+  }
+
+  return res.json({
+    msg: "success",
+    data: {
+      agenda: agenda.length > 0 ? agenda[0] : null,
+      candidates: voteResults,
+    },
+  });
+});
+
 router.post("/agendas", async (req, res) => {
   const { major_id } = req.user;
   const { title } = req.body;

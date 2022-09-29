@@ -3,7 +3,6 @@ import query from "../../databases/query.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../../helper/jwt.js";
 import strRandom from "../../helper/strRandom.js";
-import e from "express";
 const router = express.Router();
 
 const sendVerify = async (email) => {
