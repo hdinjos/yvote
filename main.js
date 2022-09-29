@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import bodyParser from "body-parser";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
 import agenda from "./routes/agenda/index.js";
@@ -13,8 +12,8 @@ dotenv.config();
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 const port = 3000;
