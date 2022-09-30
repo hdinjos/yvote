@@ -38,7 +38,7 @@ router.post("/login", async (req, res) => {
         if (decrypt) {
           foundEmail[0].password = "";
           const token = generateToken(foundEmail[0]);
-          return res.json({ msg: "success login", "acccess-token": token });
+          return res.json({ msg: "success login", "access-token": token });
         } else {
           return res.status(400).json({ msg: "email/password not valid" });
         }

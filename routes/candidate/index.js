@@ -23,6 +23,7 @@ router.get("/candidates", allRole, async (req, res) => {
 });
 
 router.post("/candidates", isOriganizer, async (req, res) => {
+  const { major_id } = req.user;
   const { user_id, motto, agenda_id } = req.body;
   if (user_id && motto && agenda_id) {
     const existCandidate = await query(
@@ -35,11 +36,20 @@ router.post("/candidates", isOriganizer, async (req, res) => {
       });
     } else {
       try {
-        await query(
-          "INSERT INTO candidates(user_id, motto, agenda_id) VALUES(?,?,?)",
-          [user_id, motto, agenda_id]
-        );
-        return res.status(201).json({ msg: "create candidate success" });
+        const user = await query("SELECT major_id FROM users WHERE id=?", [
+          user_id,
+        ]);
+        if (user.length > 0 && user[0].major_id === major_id) {
+          await query(
+            "INSERT INTO candidates(user_id, motto, agenda_id) VALUES(?,?,?)",
+            [user_id, motto, agenda_id]
+          );
+          return res.status(201).json({ msg: "create candidate success" });
+        } else {
+          return res
+            .status(400)
+            .json({ msg: "User as candidate is not same major" });
+        }
       } catch (err) {
         if (err?.code === "ER_NO_REFERENCED_ROW_2") {
           return res
@@ -64,9 +74,10 @@ router.put("/candidates/:id", isOriganizer, async (req, res) => {
     ]);
     if (foundCandidate.length > 0) {
       if (user_id && motto) {
-        await query("UPDATE candidates SET user_id=?, motto=?", [
+        await query("UPDATE candidates SET user_id=?, motto=? WHERE id=?", [
           user_id,
           motto,
+          id,
         ]);
         return res.json({ msg: "Update candidate success" });
       } else {
