@@ -55,6 +55,31 @@ router.post("/candidates", isOriganizer, async (req, res) => {
   }
 });
 
+router.put("/candidates/:id", isOriganizer, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user_id, motto } = req.body;
+    const foundCandidate = await query("SELECT * FROM candidates WHERE id=?", [
+      id,
+    ]);
+    if (foundCandidate.length > 0) {
+      if (user_id && motto) {
+        await query("UPDATE candidates SET user_id=?, motto=?", [
+          user_id,
+          motto,
+        ]);
+        return res.json({ msg: "Update candidate success" });
+      } else {
+        return res.status(400).json({ msg: "Invalid Input" });
+      }
+    } else {
+      return res.status(404).json({ msg: "Candidate not found" });
+    }
+  } catch (err) {
+    return res.status(404).json({ msg: "Candidate not found" });
+  }
+});
+
 router.delete("/candidates/:id", isOriganizer, async (req, res) => {
   try {
     const { id } = req.params;
