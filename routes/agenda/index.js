@@ -1,5 +1,6 @@
 import express from "express";
 import query from "../../databases/query.js";
+import dateFormat from "../../helper/dateFormat.js";
 import { isOriganizer, allRole } from "../../middlewares/authorization.js";
 
 const router = express.Router();
@@ -66,6 +67,48 @@ router.post("/agendas", async (req, res) => {
     }
   } else {
     return res.status(400).json({ msg: "Create agendas success" });
+  }
+});
+
+router.put("/agendas/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, date } = req.body;
+  const { major_id } = req.user;
+
+  const foundAgenda = await query(
+    "SELECT * FROM agendas WHERE id=? AND major_id=?",
+    [id, major_id]
+  );
+
+  if (foundAgenda.length > 0) {
+    if ((title, date)) {
+      if (Date.parse(date)) {
+        try {
+          await query("UPDATE agendas SET title=?, date=? WHERE id=?", [
+            title,
+            dateFormat(date),
+            id,
+          ]);
+
+          return res.json({
+            msg: "Update success",
+          });
+        } catch (err) {
+          if (err.code === "ER_TRUNCATED_WRONG_VALUE") {
+            return res.status(400).json({ msg: "Invalid date format" });
+          } else {
+            console.log(err);
+            return res.status(400).json({ msg: "Something wrong" });
+          }
+        }
+      } else {
+        return res.status(400).json({ msg: "Invalid date format" });
+      }
+    } else {
+      return res.status(400).json({ msg: "Input is not valid" });
+    }
+  } else {
+    return res.status(404).json({ msg: "Agenda not found" });
   }
 });
 

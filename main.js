@@ -42,5 +42,5 @@ app.use(candidate);
 app.use(agenda);
 
 app.listen(port, () => {
-  console.log("listen port: " + port);
+  console.log("server listen port: " + port);
 });
