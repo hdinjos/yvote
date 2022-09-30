@@ -1,12 +1,10 @@
 import express from "express";
 import query from "../../databases/query.js";
-import { isOriganizer } from "../../middlewares/authorization.js";
+import { isOriganizer, allRole } from "../../middlewares/authorization.js";
 
 const router = express.Router();
 
-router.use(isOriganizer);
-
-router.get("/agendas", async (req, res) => {
+router.get("/agendas", allRole, async (req, res) => {
   const { major_id } = req.user;
   const agendas = await query(
     "SELECT id, title, date FROM agendas WHERE major_id=?",
@@ -14,6 +12,8 @@ router.get("/agendas", async (req, res) => {
   );
   return res.json({ msg: "success", data: agendas });
 });
+
+router.use(isOriganizer);
 
 router.get("/agendas/:id", async (req, res) => {
   const { id } = req.params;

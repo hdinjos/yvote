@@ -22,9 +22,7 @@ router.get("/candidates", allRole, async (req, res) => {
   }
 });
 
-router.use(isOriganizer);
-
-router.post("/candidates", async (req, res) => {
+router.post("/candidates", isOriganizer, async (req, res) => {
   const { user_id, motto, agenda_id } = req.body;
   if (user_id && motto && agenda_id) {
     const existCandidate = await query(
@@ -57,7 +55,7 @@ router.post("/candidates", async (req, res) => {
   }
 });
 
-router.delete("/candidates/:id", async (req, res) => {
+router.delete("/candidates/:id", isOriganizer, async (req, res) => {
   try {
     const { id } = req.params;
     const removeCandidate = await query("DELETE FROM candidates WHERE id=?", [
