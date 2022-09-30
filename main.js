@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import helmet from "helmet";
+import logger from "./middlewares/logger.js";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
 import agenda from "./routes/agenda/index.js";
@@ -11,13 +13,15 @@ import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
 const app = express();
+const port = 3000;
 
+app.use(logger);
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-const port = 3000;
-
+//public route
 app.get("/", async (req, res) => {
   res.json({
     msg: "Hello world",
@@ -28,11 +32,15 @@ app.get("/", async (req, res) => {
 app.use(auth);
 app.use(major);
 
+//middleware check private route
 app.use(sessionCheck);
+
+//private route
 app.use(user);
 app.use(vote);
 app.use(candidate);
 app.use(agenda);
+
 app.listen(port, () => {
   console.log("listen port: " + port);
 });

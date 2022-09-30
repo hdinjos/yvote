@@ -17,7 +17,6 @@ router.get("/agendas", async (req, res) => {
 
 router.get("/agendas/:id", async (req, res) => {
   const { id } = req.params;
-  console.log(typeof id);
   const { major_id } = req.user;
   const agenda = await query(
     "SELECT * FROM agendas WHERE id=? AND major_id=?",
@@ -80,7 +79,6 @@ router.delete("/agendas/:id", async (req, res) => {
       return res.status(404).json({ msg: "Agenda not found" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(404).json({ msg: "Agenda not found" });
   }
 });

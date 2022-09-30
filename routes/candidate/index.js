@@ -43,7 +43,6 @@ router.post("/candidates", async (req, res) => {
         );
         return res.status(201).json({ msg: "create candidate success" });
       } catch (err) {
-        console.log(err);
         if (err?.code === "ER_NO_REFERENCED_ROW_2") {
           return res
             .status(400)
@@ -70,7 +69,6 @@ router.delete("/candidates/:id", async (req, res) => {
       return res.status(404).json({ msg: "Candidate not found" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(404).json({ msg: "Candidate not found" });
   }
 });

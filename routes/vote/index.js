@@ -53,7 +53,6 @@ router.post("/votes", isChoice, async (req, res) => {
           .status(400)
           .json({ msg: "Candidate is not registered, use another" });
       } else {
-        console.log(err);
         return res.status(403).json({ msg: "Something wrong" });
       }
     }
