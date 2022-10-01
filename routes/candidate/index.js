@@ -105,11 +105,13 @@ router.put("/candidates/:id", isOriganizer, async (req, res) => {
           ]);
           if (user.length > 0) {
             if (user[0].major_id === major_id) {
-              console.log(user);
               await query(
                 "UPDATE candidates SET user_id=?, motto=? WHERE id=?",
                 [user_id, motto, id]
               );
+              await query("DELETE FROM agenda_users WHERE candidate_id=?", [
+                id,
+              ]);
               return res.json({ msg: "Update candidate success" });
             } else {
               return res.status(400).json({ msg: "User is not same major" });

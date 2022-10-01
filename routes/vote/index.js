@@ -32,8 +32,8 @@ router.post("/votes", isChoice, async (req, res) => {
               candidate_id,
             ]);
             await query(
-              "INSERT INTO agenda_users(agenda_id, user_id) VALUES(?,?)",
-              [agenda_id, id]
+              "INSERT INTO agenda_users(agenda_id, user_id, candidate_id) VALUES(?,?,?)",
+              [agenda_id, id, candidate_id]
             );
             return res.status(201).json({ msg: "Vote is success" });
           } else {
