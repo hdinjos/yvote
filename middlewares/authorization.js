@@ -24,7 +24,11 @@ const isOriganizer = (req, res, next) => {
     if (role_id === 1) {
       next();
     } else {
-      return res.status(401).json({ msg: "Not allowed" });
+      if (role_id === 3) {
+        next();
+      } else {
+        return res.status(401).json({ msg: "Not allowed" });
+      }
     }
   } else {
     return res.status(401).json({ msg: "Not allowed" });
@@ -35,6 +39,19 @@ const isChoice = async (req, res, next) => {
   if (req.user) {
     const { role_id } = req.user;
     if (role_id === 2) {
+      next();
+    } else {
+      return res.status(401).json({ msg: "Not allowed" });
+    }
+  } else {
+    return res.status(401).json({ msg: "Not allowed" });
+  }
+};
+
+const isSuperAdmin = (req, res, next) => {
+  if (req.user) {
+    const { role_id } = req.user;
+    if (role_id === 3) {
       next();
     } else {
       return res.status(401).json({ msg: "Not allowed" });
@@ -67,4 +84,4 @@ const isVote = async (req, res, next) => {
   }
 };
 
-export { sessionCheck, isOriganizer, isChoice, allRole, isVote };
+export { sessionCheck, isOriganizer, isChoice, isSuperAdmin, allRole, isVote };
