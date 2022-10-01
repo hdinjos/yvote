@@ -32,9 +32,6 @@ app.get("/", async (req, res) => {
 app.use(auth);
 app.use(major);
 
-//middleware check private route
-app.use(sessionCheck);
-
 //private route
 app.use(user);
 app.use(vote);
