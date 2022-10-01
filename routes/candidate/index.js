@@ -22,6 +22,29 @@ router.get("/candidates", allRole, async (req, res) => {
   }
 });
 
+router.get("/candidates/:id", isOriganizer, async (req, res) => {
+  const { id } = req.params;
+  const { major_id } = req.user;
+
+  if (id) {
+    const foundCandidate = await query(
+      "SELECT A.id, B.name, B.address, A.motto, B.major_id FROM candidates as A INNER JOIN users as B ON A.user_id=B.id WHERE A.id=?",
+      [id]
+    );
+    if (foundCandidate.length > 0) {
+      if (foundCandidate[0].major_id === major_id) {
+        return res.json({ msg: "success", data: foundCandidate[0] });
+      } else {
+        return res.status(400).json({ msg: "Candidate not found" });
+      }
+    } else {
+      return res.status(400).json({ msg: "Candidate not found" });
+    }
+  } else {
+    return res.status(400).json({ msg: "Candidate not found" });
+  }
+});
+
 router.post("/candidates", isOriganizer, async (req, res) => {
   const { major_id } = req.user;
   const { user_id, motto, agenda_id } = req.body;
@@ -44,7 +67,7 @@ router.post("/candidates", isOriganizer, async (req, res) => {
             "INSERT INTO candidates(user_id, motto, agenda_id) VALUES(?,?,?)",
             [user_id, motto, agenda_id]
           );
-          return res.status(201).json({ msg: "create candidate success" });
+          return res.status(201).json({ msg: "Create candidate success" });
         } else {
           return res
             .status(400)
@@ -69,25 +92,42 @@ router.put("/candidates/:id", isOriganizer, async (req, res) => {
   try {
     const { id } = req.params;
     const { user_id, motto } = req.body;
-    const foundCandidate = await query("SELECT * FROM candidates WHERE id=?", [
-      id,
-    ]);
+    const { major_id } = req.user;
+    const foundCandidate = await query(
+      "SELECT agenda_id, major_id FROM candidates as A INNER JOIN agendas as B ON A.agenda_id=B.id WHERE A.id=?",
+      [id]
+    );
     if (foundCandidate.length > 0) {
-      if (user_id && motto) {
-        await query("UPDATE candidates SET user_id=?, motto=? WHERE id=?", [
-          user_id,
-          motto,
-          id,
-        ]);
-        return res.json({ msg: "Update candidate success" });
+      if (foundCandidate[0].major_id === major_id) {
+        if (user_id && motto) {
+          const user = await query("SELECT major_id FROM users WHERE id=?", [
+            user_id,
+          ]);
+          if (user.length > 0) {
+            if (user[0].major_id === major_id) {
+              console.log(user);
+              await query(
+                "UPDATE candidates SET user_id=?, motto=? WHERE id=?",
+                [user_id, motto, id]
+              );
+              return res.json({ msg: "Update candidate success" });
+            } else {
+              return res.status(400).json({ msg: "User is not same major" });
+            }
+          } else {
+            return res.status(400).json({ msg: "User is not valid" });
+          }
+        } else {
+          return res.status(400).json({ msg: "Invalid Input" });
+        }
       } else {
-        return res.status(400).json({ msg: "Invalid Input" });
+        return res.status(400).json({ msg: "Candidate is not same major" });
       }
     } else {
       return res.status(404).json({ msg: "Candidate not found" });
     }
   } catch (err) {
-    return res.status(404).json({ msg: "Candidate not found" });
+    return res.status(400).json({ msg: "User is not valid" });
   }
 });
 
