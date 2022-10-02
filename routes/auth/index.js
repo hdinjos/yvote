@@ -3,6 +3,7 @@ import query from "../../databases/query.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../../helper/jwt.js";
 import strRandom from "../../helper/strRandom.js";
+import mailer from "../../helper/mailer.js";
 const router = express.Router();
 
 const sendVerify = async (email) => {
@@ -12,12 +13,32 @@ const sendVerify = async (email) => {
     [email]
   );
 
+  const mailBody = `
+  <div style="text-align:center;">
+    <div>
+      <h4>Use code bellow to active your account</h4>
+    </div>
+    <div>
+      <h2>${randomText}</h2>
+    </div>
+  </div>
+  `;
+
+  const optionSendMail = {
+    to: email,
+    subject: "Verification Account",
+    text: mailBody,
+    html: mailBody,
+  };
+
   if (checkEmail.length > 0) {
+    await mailer(optionSendMail);
     await query("UPDATE email_verifications SET verify_code=? WHERE email=?", [
       randomText,
       email,
     ]);
   } else {
+    await mailer(optionSendMail);
     await query(
       "INSERT INTO email_verifications (email, verify_code) VALUES(?,?)",
       [email, randomText]
@@ -59,12 +80,12 @@ router.post("/register", async (req, res) => {
   const { email, fullname, password, major_id } = req.body;
   if (fullname && email && password && major_id) {
     try {
+      await sendVerify(email);
       const hashPassword = await bcrypt.hash(password, 10);
       await query(
         "INSERT INTO users (email, password, name, major_id) VALUES(?,?,?,?)",
         [email, hashPassword, fullname, major_id]
       );
-      await sendVerify(email);
       return res
         .status(201)
         .json({ msg: "Register success, please check your email to actived" });
@@ -107,6 +128,7 @@ router.post("/register/verify/activate", async (req, res) => {
     );
     if (checkCode.length > 0) {
       await query("UPDATE users SET status=? WHERE email=?", [1, email]);
+      await query("DELETE FROM email_verifications WHERE email=?", [email]);
       const getAccount = await query(
         "SELECT id, email, name, address, age, role_id, major_id, is_vote, status FROM users WHERE email=?",
         [email]
