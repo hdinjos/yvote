@@ -105,7 +105,7 @@ router.put("/users/:id", async (req, res) => {
   }
 });
 
-router.put("/change-password/:id", async (req, res) => {
+router.put("/change-password/:id", isOriganizer, async (req, res) => {
   try {
     const { major_id } = req.user;
     const { id } = req.params;
@@ -123,8 +123,9 @@ router.put("/change-password/:id", async (req, res) => {
               hashPassword,
               id,
             ]);
+            return res.json({ msg: "Reset Password Success" });
           } else {
-            res.status(401).json({ msg: "User not found" });
+            return res.status(401).json({ msg: "User not found" });
           }
         } else {
           const foundUser = await query(
@@ -137,8 +138,9 @@ router.put("/change-password/:id", async (req, res) => {
               hashPassword,
               id,
             ]);
+            return res.json({ msg: "Reset Password Success" });
           } else {
-            res.status(401).json({ msg: "User not found" });
+            return res.status(401).json({ msg: "User not found" });
           }
         }
       } else {
