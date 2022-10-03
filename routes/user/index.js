@@ -154,4 +154,24 @@ router.put("/change-password/:id", isOriganizer, async (req, res) => {
   }
 });
 
+router.get("/actived-user/:id", isOriganizer, async (req, res) => {
+  try {
+    const { major_id } = req.user;
+    const { id } = req.params;
+
+    const foundUser = await query(
+      "SELECT id FROM users WHERE id=? AND major_id=?",
+      [id, major_id]
+    );
+    if (foundUser.length > 0) {
+      await query("UPDATE users SET status=? WHERE id=?", [1, id]);
+      return res.json({ msg: "Success actived users" });
+    } else {
+      return res.status(401).json({ msg: "User not found" });
+    }
+  } catch (err) {
+    res.status(400).json({ msg: "Somthing wrong" });
+  }
+});
+
 export default router;
