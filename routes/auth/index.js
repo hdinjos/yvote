@@ -128,21 +128,21 @@ router.post("/register/verify/activate", async (req, res) => {
     );
     if (checkCode.length > 0) {
       await query("UPDATE users SET status=? WHERE email=?", [1, email]);
-      await query("DELETE FROM email_verifications WHERE email=?", [email]);
       const getAccount = await query(
-        "SELECT id, email, name, address, age, role_id, major_id, is_vote, status FROM users WHERE email=?",
+        "SELECT id, email, name, address, age, role_id, major_id, status FROM users WHERE email=?",
         [email]
       );
       const token = generateToken(getAccount[0]);
+      await query("DELETE FROM email_verifications WHERE email=?", [email]);
       return res.json({
         msg: "Account is active",
         "access-token": token,
       });
     } else {
-      return res.status(400).json({ msg: "Email not valid" });
+      return res.status(400).json({ msg: "Email/code not valid" });
     }
   } else {
-    return res.status(400).json({ msg: "Email not valid" });
+    return res.status(400).json({ msg: "Input is not valid" });
   }
 });
 

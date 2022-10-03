@@ -105,4 +105,51 @@ router.put("/users/:id", async (req, res) => {
   }
 });
 
+router.put("/change-password/:id", async (req, res) => {
+  try {
+    const { major_id } = req.user;
+    const { id } = req.params;
+    const { password, password_two } = req.body;
+    if (password && password_two) {
+      if (password === password_two) {
+        if (!major_id) {
+          const foundUser = await query(
+            "SELECT * FROM users WHERE id=? AND role_id=?",
+            [id, 1]
+          );
+          if (foundUser.length > 0) {
+            const hashPassword = await bcrypt.hash(password, 10);
+            await query("UPDATE users SET password=? WHERE id=?", [
+              hashPassword,
+              id,
+            ]);
+          } else {
+            res.status(401).json({ msg: "User not found" });
+          }
+        } else {
+          const foundUser = await query(
+            "SELECT * FROM users WHERE id=? AND major_id=?",
+            [id, major_id]
+          );
+          if (foundUser.length > 0) {
+            const hashPassword = await bcrypt.hash(password, 10);
+            await query("UPDATE users SET password=? WHERE id=?", [
+              hashPassword,
+              id,
+            ]);
+          } else {
+            res.status(401).json({ msg: "User not found" });
+          }
+        }
+      } else {
+        res.status(400).json({ msg: "Password is not same" });
+      }
+    } else {
+      res.status(400).json({ msg: "Input is not valid" });
+    }
+  } catch (err) {
+    res.status(400).json({ msg: "Somthing wrong" });
+  }
+});
+
 export default router;
