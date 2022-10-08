@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT_SERVER || 3000;
 
-app.use(logger);
+// app.use(logger);
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
