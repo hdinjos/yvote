@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
-import logger from "./middlewares/logger.js";
+// import logger from "./middlewares/logger.js";
 import auth from "./routes/auth/index.js";
 import candidate from "./routes/candidate/index.js";
 import agenda from "./routes/agenda/index.js";
