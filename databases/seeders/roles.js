@@ -2,7 +2,7 @@ import query from "../query.js";
 
 async function roleSeed() {
   const sql = "INSERT INTO roles (name) VALUES(?)";
-  const data = [["panitia"], ["user"]];
+  const data = [["panitia"], ["user"], ["superadmin"]];
   for (let i = 0; i < data.length; i++) {
     await query(sql, data[i]);
   }
