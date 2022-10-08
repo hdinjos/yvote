@@ -12,7 +12,7 @@ import major from "./routes/major/index.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT_SERVER || 3000;
 
 app.use(logger);
 app.use(helmet());
