@@ -9,11 +9,10 @@ import agenda from "./routes/agenda/index.js";
 import vote from "./routes/vote/index.js";
 import user from "./routes/user/index.js";
 import major from "./routes/major/index.js";
-import { sessionCheck } from "./middlewares/authorization.js";
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(logger);
 app.use(helmet());
